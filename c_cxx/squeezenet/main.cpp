@@ -67,6 +67,15 @@ void run_ort_trt() {
   Ort::ThrowOnError(api.CreateTensorRTProviderOptions(&tensorrt_options));
   std::unique_ptr<OrtTensorRTProviderOptionsV2, decltype(api.ReleaseTensorRTProviderOptions)> rel_trt_options(
       tensorrt_options, api.ReleaseTensorRTProviderOptions);
+  
+  // set param
+  std::vector<const char*> lkeys{"device_id", "trt_fp16_enable", "trt_cuda_graph_enable", "trt_engine_cache_path",
+                                 "trt_timimg_cache_enable"};
+
+  std::vector<const char*> lvalues{"0", "1", "1", "1", "./", "1"};
+
+  Ort::ThrowOnError(api.UpdateTensorRTProviderOptions(rel_trt_options.get(), lkeys.data(), lvalues.data(), lkeys.size())
+
   Ort::ThrowOnError(api.SessionOptionsAppendExecutionProvider_TensorRT_V2(static_cast<OrtSessionOptions*>(session_options),
                                                         rel_trt_options.get()));
 
